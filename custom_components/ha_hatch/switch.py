@@ -7,7 +7,7 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchDeviceClass, SwitchEntityDescription,
 )
-from hatch_rest_api import RestPlus, RestIot, RestBaby, RestoreV5
+from hatch_rest_api import RestPlus, RestIot, RestBaby, RestoreV5, Restore
 from hatch_rest_api.const import RIOT_FLAGS_CLOCK_IGNORE_TAP
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -50,6 +50,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
             )
             entities.append(
                 HatchPowerSwitch(
+                    coordinator=coordinator, thing_name=rest_device.thing_name
+                )
+            )
+        if isinstance(rest_device, Restore):
+            entities.append(
+                HatchRestoreRoutineSwitch(
                     coordinator=coordinator, thing_name=rest_device.thing_name
                 )
             )
@@ -144,6 +150,33 @@ class HatchPowerSwitch(HatchEntity, SwitchEntity):
 
     def turn_off(self, **kwargs):
         self.rest_device.set_on(False)
+
+
+class HatchRestoreRoutineSwitch(HatchEntity, SwitchEntity):
+    """Original Restore: on starts the bedtime routine, off stops playback."""
+
+    _attr_icon = "mdi:weather-night"
+
+    def __init__(self, coordinator: HatchDataUpdateCoordinator, thing_name: str):
+        super().__init__(coordinator=coordinator, thing_name=thing_name, entity_type="Routine")
+
+    @property
+    def is_on(self) -> bool | None:
+        return self.rest_device.is_playing
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "playing": self.rest_device.current_playing,
+            "step": self.rest_device.current_step,
+            "routine_id": self.rest_device.routine_id,
+        }
+
+    def turn_on(self, **kwargs):
+        self.rest_device.turn_on_routine()
+
+    def turn_off(self, **kwargs):
+        self.rest_device.turn_off()
 
 
 class HatchToddlerLockSwitch(HatchEntity, SwitchEntity):

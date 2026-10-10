@@ -1,12 +1,19 @@
 {
   "domain": "ha_hatch",
   "name": "Hatch Rest Mini/Plus",
-  "codeowners": ["@dahlb"],
+  "codeowners": [
+    "@dahlb"
+  ],
   "config_flow": true,
-  "documentation": "https://github.com/dahlb/ha_hatch",
+  "documentation": "https://github.com/ddunkijaco/ha_hatch",
   "iot_class": "cloud_push",
-  "issue_tracker": "https://github.com/dahlb/ha_hatch/issues",
-  "loggers": ["ha_hatch", "hatch_rest_api"],
-  "requirements": ["hatch_rest_api==1.34.5"],
-  "version": "1.31.7"
+  "issue_tracker": "https://github.com/ddunkijaco/ha_hatch/issues",
+  "loggers": [
+    "ha_hatch",
+    "hatch_rest_api"
+  ],
+  "requirements": [
+    "hatch_rest_api @ git+https://github.com/ddunkijaco/hatch_rest_api@4590bc317fbe62175fcd8a4c30d265b108ed05cc"
+  ],
+  "version": "1.31.7.1"
 }

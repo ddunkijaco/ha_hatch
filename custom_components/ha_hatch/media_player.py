@@ -11,7 +11,7 @@ from .const import (
     CONFIG_TURN_ON_MEDIA,
     CONFIG_TURN_ON_DEFAULT,
 )
-from hatch_rest_api import RestIot, RestoreIot, RestoreV5, RestBaby
+from hatch_rest_api import RestIot, RestoreIot, RestoreV5, RestBaby, Restore
 from .media_rest_entity import MediaRestEntity
 from .media_riot_entity import MediaRiotEntity
 
@@ -22,6 +22,9 @@ def choose_media_entity(
     config_turn_on_media,
     coordinator,
 ):
+    if isinstance(rest_device, Restore):
+        # Original Restore: controlled through its routine switch instead.
+        return None
     if isinstance(rest_device, RestIot | RestoreIot | RestoreV5 | RestBaby):
         return MediaRiotEntity(
             coordinator=coordinator, thing_name=rest_device.thing_name
